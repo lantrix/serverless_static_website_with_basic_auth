@@ -87,7 +87,7 @@ resource "aws_lambda_function" "basic_auth_at_edge_lambda" {
   role             = aws_iam_role.lambda_execution_role.arn
   handler          = "index.handler"
   source_code_hash = data.archive_file.basic_auth_at_edge_lambda_package.output_base64sha256
-  runtime          = "nodejs10.x"
+  runtime          = "nodejs16.x"
   description      = "${local.fqdn} - Basic Auth @Edge Lambda"
   memory_size      = 128
   timeout          = 1
@@ -101,7 +101,7 @@ resource "aws_lambda_function" "basic_auth_at_edge_lambda" {
 
 locals {
   # Workaround for https://github.com/hashicorp/terraform/issues/15751
-  serverless_website_bucket_name = "${local.fqdn_dots_replaced_with_hyphens}"
+  serverless_website_bucket_name = local.fqdn_dots_replaced_with_hyphens
 }
 
 resource "aws_s3_bucket" "serverless_website_bucket" {
@@ -110,15 +110,6 @@ resource "aws_s3_bucket" "serverless_website_bucket" {
     0,
     min(53, length(local.serverless_website_bucket_name)),
   )}---contents"
-  acl = "private"
-
-  server_side_encryption_configuration {
-    rule {
-      apply_server_side_encryption_by_default {
-        sse_algorithm = "AES256"
-      }
-    }
-  }
 
   tags = {
     terraform                               = "true"
@@ -126,6 +117,20 @@ resource "aws_s3_bucket" "serverless_website_bucket" {
   }
 
   force_destroy = true
+}
+
+resource "aws_s3_bucket_server_side_encryption_configuration" "serverless_website_bucket_encryption_configuration" {
+  bucket = aws_s3_bucket.serverless_website_bucket.bucket
+  rule {
+    apply_server_side_encryption_by_default {
+      sse_algorithm = "AES256"
+    }
+  }
+}
+
+resource "aws_s3_bucket_acl" "serverless_website_bucket_acl" {
+  bucket = aws_s3_bucket.serverless_website_bucket.bucket
+  acl    = "private"
 }
 
 resource "aws_cloudfront_origin_access_identity" "cloudfront_origin_access_identity" {
@@ -207,7 +212,7 @@ resource "aws_s3_bucket_policy" "serverless_website_bucket_policy" {
 }
 
 resource "aws_cloudfront_distribution" "serverless_website_distribution" {
-  aliases = ["${local.fqdn}"]
+  aliases = concat(["${local.fqdn}"], var.domain_aliases)
 
   origin {
     domain_name = aws_s3_bucket.serverless_website_bucket.bucket_domain_name
@@ -283,7 +288,7 @@ resource "aws_cloudfront_distribution" "serverless_website_distribution" {
 
 resource "aws_route53_record" "serverless_website_recordset_group" {
   zone_id = var.hosted_zone_id
-  name    = "${local.fqdn}"
+  name    = local.fqdn
   type    = "A"
 
   alias {

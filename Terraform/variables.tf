@@ -23,6 +23,11 @@ variable "domain_name" {
   description = "The domain to use"
 }
 
+variable "domain_aliases" {
+  description = "Additional FQDNs"
+  default     = []
+}
+
 variable "acm_certificate_arn" {
   description = "The ARN of the certificate in the ACM to use for the serverless website"
 }
