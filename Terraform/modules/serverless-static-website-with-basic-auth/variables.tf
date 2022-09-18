@@ -19,6 +19,12 @@ variable "domain_name" {
   description = "Name of the domain to use in Route 53"
 }
 
+variable "domain_aliases" {
+  type        = list(string)
+  description = "Additional names the CloudFront distribution will respond on"
+  default     = []
+}
+
 variable "acm_certificate_arn" {
   type        = string
   description = "The ARN of the ACM certificate to use for the CloudFront distribution (must match a superset of the subdomain.domain to be created in Route 53)"
