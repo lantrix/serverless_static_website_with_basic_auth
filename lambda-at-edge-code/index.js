@@ -14,7 +14,7 @@ exports.handler = (event, context, callback) => {
     // Construct all credential strings and add to corresponding list
     for (let user in credentials) {
         const password = credentials[user];
-        const auth_string = 'Basic ' + new Buffer(user + ':' + password).toString('base64');
+        const auth_string = 'Basic ' + new Buffer.from(user + ':' + password).toString('base64');
         credential_strings.push(auth_string);
     }
 
