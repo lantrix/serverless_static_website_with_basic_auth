@@ -20,7 +20,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       Handler: index.handler
-      Runtime: nodejs6.10
+      Runtime: nodejs16.x
       CodeUri: lambda-at-edge-code
       Description: Serverless Basic Auth @Edge Lambda
       MemorySize: 128
@@ -50,7 +50,7 @@ Resources:
             Action:
             - logs:*
             Resource: arn:aws:logs:*:*:*
-  
+
   BasicAuthAtEdgeLambdaVersion:
     Type: AWS::Lambda::Version
     Properties:
