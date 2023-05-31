@@ -20,7 +20,7 @@ Before you can use the tools in this repository out of the box, you need
  - a [log bucket](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/AccessLogs.html#access-logs-choosing-s3-bucket) which can be used to store [CloudFront access logs](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/AccessLogs.html) (use the Terraform module provided in [https://github.com/dumrauf/aws_log_bucket](https://github.com/dumrauf/aws_log_bucket) to create a log bucket if needed) 
 
  If Terraform is the tool of choice then you also need
- - a [Terraform](https://www.terraform.io/intro/getting-started/install.html) CLI
+ - a [Terraform](https://developer.hashicorp.com/terraform/downloads) CLI
 
 
 ## You Want
